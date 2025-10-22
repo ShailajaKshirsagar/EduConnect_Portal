@@ -10,6 +10,8 @@ import com.educonnect.service.StudentService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -58,5 +60,25 @@ public class StudentServiceImpl implements StudentService {
                 .build();
 
         return dto;
+    }
+
+    @Override
+    public Page<StudentReponseDto> getStudentByDepartment(String department, Pageable pageable) {
+
+        Page<Student> students;
+
+        if(department==null || department.isEmpty()){
+            students = studentRepository.findAll(pageable);
+        }
+        else {
+            students = studentRepository.filterByDepartmentContainingIgnoreCase(department, pageable);
+        }
+        return students.map(student -> StudentReponseDto.builder()
+                .fname(student.getFname())
+                .lname(student.getLname())
+                .department(student.getDepartment())
+                .age(student.getAge())
+                .year(student.getYear())
+                .build());
     }
 }
