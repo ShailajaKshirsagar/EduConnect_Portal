@@ -17,9 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.PublicKey;
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/student")
 @Tag(name = "Student Management",description = "API's for managing students")
