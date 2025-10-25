@@ -26,6 +26,8 @@ public class User
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private String profilephotopath;
+
     public enum Role{
         STUDENT,
         FACULTY,
