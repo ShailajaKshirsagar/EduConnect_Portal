@@ -60,4 +60,23 @@ public class UserController {
 
         return new ResponseEntity<>("Profile photo uploaded successfully",HttpStatus.OK);
     }
+
+    //get profile photo of user
+    @GetMapping("/getProfilePhoto/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<byte[]> getProfilePhoto(@PathVariable long id) throws IOException {
+
+        User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found"));
+        String storedpath = user.getProfilephotopath();
+        if(storedpath==null || storedpath.isBlank()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"No profile photo found for this id");
+        }
+        byte[] imageBytes = fileService.readfilebyte(storedpath);
+        String contentType = fileService.detectContentType(storedpath);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(contentType));
+        headers.setContentDisposition(ContentDisposition.inline().filename("profile_" + user.getUsername()).build());
+        headers.setContentLength(imageBytes.length);
+        return new ResponseEntity<>(imageBytes,headers,HttpStatus.OK);
+    }
 }
