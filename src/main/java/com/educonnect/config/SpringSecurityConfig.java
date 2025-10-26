@@ -30,9 +30,11 @@ public class SpringSecurityConfig
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
-                        .requestMatchers("/user/**").permitAll()
+                        .requestMatchers("/user/addUser").permitAll()
 
                         .requestMatchers("/student/**").authenticated()
+                        .requestMatchers("/user/uploadPhoto/*").authenticated()
+                        .requestMatchers("/user/getProfilePhoto/*").authenticated()
 
                         .anyRequest().authenticated()
                 )
@@ -42,7 +44,6 @@ public class SpringSecurityConfig
 
         return http.build();
     }
-
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
