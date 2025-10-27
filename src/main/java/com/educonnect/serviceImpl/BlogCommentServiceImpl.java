@@ -10,6 +10,8 @@ import com.educonnect.repository.BlogPostRepo;
 import com.educonnect.repository.UserRepo;
 import com.educonnect.service.BlogCommentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -49,5 +51,18 @@ public class BlogCommentServiceImpl implements BlogCommentService {
                 .authorid(author.getId())
                 .createdat(saved.getCreatedat())
                 .build();
+    }
+
+    @Override
+    public Page<CommentResponseDto> getCommentsByPostId(long postId, Pageable pageable) {
+
+       Page<BlogComment> blogComments = blogCommentRepo.findByPostId(postId,pageable);
+
+       return blogComments.map(comment -> CommentResponseDto.builder()
+               .comment_id(comment.getComment_id())
+               .authorname(comment.getAuthor().getUsername())
+               .content(comment.getContent())
+               .authorid(comment.getAuthor().getId())
+               .createdat(comment.getCreatedat()).build());
     }
 }
