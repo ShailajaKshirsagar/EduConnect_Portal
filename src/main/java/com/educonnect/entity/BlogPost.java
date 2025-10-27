@@ -33,6 +33,9 @@ public class BlogPost
 
     private Instant updatedAt;
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BlogComment> comments = new ArrayList<>();
+
     @PrePersist
     public  void oncreate(){
         this.createdAt=Instant.now();
