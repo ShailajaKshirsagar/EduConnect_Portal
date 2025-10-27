@@ -5,4 +5,6 @@ import com.educonnect.dto.PostResponseDto;
 
 public interface BlogPostService {
     PostResponseDto createPost(PostRequestDto dto, String username);
+
+    PostResponseDto getPostById(long id, String username);
 }
