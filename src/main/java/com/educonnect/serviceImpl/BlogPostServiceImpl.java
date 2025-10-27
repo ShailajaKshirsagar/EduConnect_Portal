@@ -35,7 +35,7 @@ public class BlogPostServiceImpl implements BlogPostService {
         BlogPost savedPost = postRepository.save(post);
 
         PostResponseDto response = PostResponseDto.builder()
-                .id(savedPost.getId())
+                .id(savedPost.getPost_id())
                 .title(savedPost.getTitle())
                 .content(savedPost.getContent())
                 .authorname(author.getUsername())
@@ -43,6 +43,27 @@ public class BlogPostServiceImpl implements BlogPostService {
                 .updatedAt(savedPost.getUpdatedAt())
                 .authorid(author.getId())
                 .build();
+        return response;
+    }
+
+    @Override
+    public PostResponseDto getPostById(long id, String username) {
+
+        User author =userRepository.findByUsername(username);
+        if(author==null){
+            throw new RuntimeException("Author not found");
+        }
+        BlogPost post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found with this id"));
+
+        PostResponseDto response = PostResponseDto.builder()
+                .id(post.getPost_id())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .authorname(post.getAuthor().getUsername())
+                .createdAt(post.getCreatedAt())
+                .updatedAt(post.getUpdatedAt())
+                .build();
+
         return response;
     }
 }
