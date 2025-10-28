@@ -6,6 +6,7 @@ import com.educonnect.repository.UserRepo;
 import com.educonnect.service.CustomUserService;
 import com.educonnect.serviceImpl.FileService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 
 @RestController
 @RequestMapping("/user")
@@ -78,5 +80,16 @@ public class UserController {
         headers.setContentDisposition(ContentDisposition.inline().filename("profile_" + user.getUsername()).build());
         headers.setContentLength(imageBytes.length);
         return new ResponseEntity<>(imageBytes,headers,HttpStatus.OK);
+    }
+
+    //soft delete user only admin can delete
+    @DeleteMapping("/deleteUser/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "basicAuth")
+    public ResponseEntity<String> softDeleteUser(@PathVariable long id,Authentication authentication) throws AccessDeniedException {
+
+        String username = authentication.getName();
+        String msg = customUserService.softDeleteUser(id,username);
+        return new ResponseEntity<>(msg,HttpStatus.OK);
     }
 }
