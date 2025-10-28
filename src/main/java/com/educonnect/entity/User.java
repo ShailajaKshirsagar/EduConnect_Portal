@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
+
 @Entity
 @Setter
 @Getter
@@ -21,7 +23,11 @@ public class User
 
     private String password;
 
+    //for soft delete
     private boolean active = true;
+
+    //for delete time
+    private Instant deletedat;
 
     @Enumerated(EnumType.STRING)
     private Role role;
