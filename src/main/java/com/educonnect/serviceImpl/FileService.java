@@ -65,7 +65,6 @@ public class FileService {
 
     //This method determine the type of content
     public String detectContentType(String storedPath){
-
         String lower = storedPath.toLowerCase();
         if(lower.endsWith(".png")) return "image/png";
         if (lower.endsWith(".jpg")) return "image/jpg";
