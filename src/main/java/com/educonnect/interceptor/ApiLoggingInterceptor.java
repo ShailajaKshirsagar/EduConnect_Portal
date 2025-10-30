@@ -4,6 +4,7 @@ import com.educonnect.entity.ActivityLogs;
 import com.educonnect.entity.User;
 import com.educonnect.repository.ActivityLogRepo;
 import com.educonnect.repository.UserRepo;
+import com.educonnect.service.ApiUsageService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +26,24 @@ public class ApiLoggingInterceptor implements HandlerInterceptor {
     @Autowired
     private ActivityLogRepo activityLogRepository;
 
+    @Autowired
+    private ApiUsageService apiUsageService;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()
+                && !"anonymousUser".equalsIgnoreCase(String.valueOf(authentication.getPrincipal()))) {
+
+            String username = authentication.getName();
+            User user = userRepository.findByUsername(username);
+
+            if (user != null) {
+                apiUsageService.incrementUsage(user);
+            }
+        }
+
         request.setAttribute("startTime", System.currentTimeMillis());
         return true;
     }
