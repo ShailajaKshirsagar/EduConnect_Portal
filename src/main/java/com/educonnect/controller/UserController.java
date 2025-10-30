@@ -8,6 +8,7 @@ import com.educonnect.serviceImpl.FileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -52,6 +53,7 @@ public class UserController {
         boolean isAdmin = authentication.getAuthorities().stream().anyMatch(a-> a.getAuthority().equals("ROLE_ADMIN"));
 
         String callerusername = authentication.getName();
+
         if(!isAdmin && !callerusername.equals(target.getUsername())){
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Not allowed to upload photo");
         }
@@ -59,7 +61,6 @@ public class UserController {
         String storedpath = fileService.saveProfileImg(file,id);
         target.setProfilephotopath(storedpath);
         userRepository.save(target);
-
         return new ResponseEntity<>("Profile photo uploaded successfully",HttpStatus.OK);
     }
 
@@ -67,14 +68,15 @@ public class UserController {
     @GetMapping("/getProfilePhoto/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<byte[]> getProfilePhoto(@PathVariable long id) throws IOException {
-
         User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found"));
         String storedpath = user.getProfilephotopath();
+
         if(storedpath==null || storedpath.isBlank()){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"No profile photo found for this id");
         }
         byte[] imageBytes = fileService.readfilebyte(storedpath);
         String contentType = fileService.detectContentType(storedpath);
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(contentType));
         headers.setContentDisposition(ContentDisposition.inline().filename("profile_" + user.getUsername()).build());
