@@ -21,7 +21,6 @@ public class FeePaymentController
     @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "basicAuth")
     public ResponseEntity<FeePayment> addPayment(@RequestBody FeePayment payment){
-
         FeePayment fees = feePaymentService.addPayment(payment);
         return new ResponseEntity<>(fees, HttpStatus.CREATED);
     }
@@ -31,7 +30,6 @@ public class FeePaymentController
     @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "basicAuth")
     public ResponseEntity<PaymentSummaryDto> getPaymentSummary(@RequestParam String month){
-
         PaymentSummaryDto response = feePaymentService.getPaymentSummary(month);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
