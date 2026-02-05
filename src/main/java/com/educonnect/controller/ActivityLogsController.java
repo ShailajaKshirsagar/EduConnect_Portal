@@ -19,6 +19,7 @@ import java.util.List;
 @RequestMapping("/logs")
 @RequiredArgsConstructor
 @Tag(name = "Activity Log Api",description = "API'S for Activity Logs")
+//Activity logs controller
 public class ActivityLogsController
 {
     @Autowired
